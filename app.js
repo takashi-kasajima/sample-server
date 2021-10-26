@@ -27,21 +27,18 @@ app.get('/users/:id', (req, res) => {
     snapshot.forEach(doc => {
       let data = doc.data()
       console.log(data)
-      if (data.nickname) {
-        console.log(data)
-        res.json(data)
-      } else {
+      if (!data.nickname) {
         data = {
           user_id: data.user_id,
           nickname: data.user_id
         }
-        res.json(data)
       }
+      res.status(200).json({message: 'User details by user_id', user: data})
       
     });
   })
   .catch(err => {
-    console.log('Error getting documents', err);
+    console.log(err)
   });
 });
 
