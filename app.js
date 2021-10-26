@@ -15,8 +15,12 @@ const docRef = db.collection('messages');
 const app = express();
 app.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+  res.send('hello')
+})
+
 // GETで/helloにアクセスするとこの関数が実行される
-app.get('/users/:id', async(req, res) => {
+app.get('/users/:id', (req, res) => {
   db.collection('users').where('user_id', '==', req.params.id)
   .get()
   .then(snapshot => {
