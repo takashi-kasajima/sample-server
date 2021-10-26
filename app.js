@@ -36,4 +36,4 @@ app.get('/users/:id', (req, res) => {
 
 // Expressを起動する
 const port = '8080';
-app.listen(port, () => console.log(`app start listening on port ${port}`));
+app.listen(process.env.PORT || 5000, () => console.log(`app start listening on port ${port}`));
