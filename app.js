@@ -25,8 +25,19 @@ app.get('/users/:id', (req, res) => {
   .get()
   .then(snapshot => {
     snapshot.forEach(doc => {
-      const data = doc.data()
-      res.send(data.user_id)
+      let data = doc.data()
+      console.log(data)
+      if (data.nickname) {
+        console.log(data)
+        res.json(data)
+      } else {
+        data = {
+          user_id: data.user_id,
+          nickname: data.user_id
+        }
+        res.json(data)
+      }
+      
     });
   })
   .catch(err => {
@@ -35,5 +46,4 @@ app.get('/users/:id', (req, res) => {
 });
 
 // Expressを起動する
-const port = '8080';
-app.listen(process.env.PORT || 5000, () => console.log(`app start listening on port ${port}`));
+app.listen(process.env.PORT || 5000, () => console.log(`app start listening on port ${process.env.PORT || 5000}`));
