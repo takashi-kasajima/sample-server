@@ -1,1 +1,1 @@
-# sample-auth
+# sample-server

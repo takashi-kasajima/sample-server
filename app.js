@@ -1,46 +1,29 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const admin = require('firebase-admin');
-const functions = require('firebase-functions');
-const ServiceAccount = require('./service-account.json');
-
-// Firebaseのinitialize
-admin.initializeApp({ credential: admin.credential.cert(ServiceAccount) });
-
-// Firestoreの参照を取得
-const db = admin.firestore();
-const docRef = db.collection('messages');
+import express from "express";
+import bodyParser from "body-parser";
+import { db } from "./firebase.js";
+import { getDocs, collection } from "@firebase/firestore";
 
 // Expressのセットアップ
 const app = express();
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-  res.send('hello')
-})
+app.get("/", (req, res) => {
+  res.send("hello");
+});
 
-// GETで/helloにアクセスするとこの関数が実行される
-app.get('/users/:id', (req, res) => {
-  db.collection('users').where('user_id', '==', req.params.id)
-  .get()
-  .then(snapshot => {
-    snapshot.forEach(doc => {
-      let data = doc.data()
-      console.log(data)
-      if (!data.nickname) {
-        data = {
-          user_id: data.user_id,
-          nickname: data.user_id
-        }
-      }
-      res.status(200).json({message: 'User details by user_id', user: data})
-      
-    });
-  })
-  .catch(err => {
-    console.log(err)
-  });
+app.get("/users", async (req, res) => {
+  try {
+    const userCol = collection(db, "users");
+    const snapshots = await getDocs(userCol);
+    const userList = snapshots.docs.map((item) => item.data());
+    res.json(userList);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 // Expressを起動する
-app.listen(process.env.PORT || 5000, () => console.log(`app start listening on port ${process.env.PORT || 5000}`));
+const port = 8080;
+app.listen(port || 5000, () =>
+  console.log(`app start listening on port ${port || 5000}`)
+);
